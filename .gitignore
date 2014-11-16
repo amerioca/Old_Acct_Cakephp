@@ -3,7 +3,7 @@
 *.gz
 .idea
 #tmp/*
-tmp/cached/*
+tmp/cache/*
 tmp/sessions/*
 tmp/logs/*
 tmp/tests/*
