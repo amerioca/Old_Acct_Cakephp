@@ -1,0 +1,42 @@
+<div class="cake-debug-output">
+<span><strong>/acct.clublove.me/Controller/EntrancesController.php</strong> (line <strong>119</strong>)</span>
+<pre class="cake-debug">
+array()
+</pre>
+</div><!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />	<title>
+		CakePHP: the rapid development php framework:
+		Entrances	</title>
+	<link href="/favicon.ico" type="image/x-icon" rel="icon" /><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" /><link rel="stylesheet" type="text/css" href="/usermgmt/css/umstyle.css" />
+	<link rel="stylesheet" type="text/css" href="/css/cake.generic.css" />
+	<link rel="stylesheet" type="text/css" href="/js/jquery.mobile/demos/css/themes/default/jquery.mobile-1.4.3.min.css" />
+	<link rel="stylesheet" type="text/css" href="/js/jquery.mobile/demos/_assets/css/jqm-demos.css" />
+
+	<script type="text/javascript" src="/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.mobile/demos/_assets/js/index.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="header">
+			<h1><a href="http://cakephp.org">CakePHP: the rapid development php framework</a></h1>
+		</div>
+		<div id="content">
+
+			
+					</div>
+		<div id="footer">
+			<a href="http://www.cakephp.org/" target="_blank" id="cake-powered"><img src="/img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" /></a>			<p>
+				CakePHP 2.5.3			</p>
+		</div>
+	</div>
+	<table class="cake-sql-log" id="cakeSqlLog_1411941862542885e6479de3_12768124" summary="Cake SQL Log" cellspacing="0"><caption>(default) 2 queries took 1 ms</caption>	<thead>
+		<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>
+	</thead>
+	<tbody>
+	<tr><td>1</td><td>UPDATE entrances SET timer = (timer -1) WHERE location = 1 AND timer&gt;=-1;</td><td></td><td style="text-align: right">3</td><td style="text-align: right">3</td><td style="text-align: right">1</td></tr>
+<tr><td>2</td><td>SELECT `Entrance`.`id`, `Entrance`.`user_id`, `Entrance`.`location`, `Entrance`.`location_id`, `Entrance`.`timer`, `Entrance`.`created`, `Entrance`.`modified`, `User`.`id`, `User`.`user_group_id`, `User`.`discount_id`, `User`.`username`, `User`.`pin`, `User`.`barcode`, `User`.`password`, `User`.`salt`, `User`.`email`, `User`.`first_name`, `User`.`last_name`, `User`.`email_verified`, `User`.`active`, `User`.`ip_address`, `User`.`created`, `User`.`modified` FROM `clublove`.`entrances` AS `Entrance` LEFT JOIN `clublove`.`users` AS `User` ON (`Entrance`.`user_id` = `User`.`id`)  WHERE `timer` = 0 AND `Entrance`.`created` &gt; &#039;BETWEEN NOW() AND NOW()- INTERVAL 24 HOURS&#039;</td><td></td><td style="text-align: right">0</td><td style="text-align: right">0</td><td style="text-align: right">0</td></tr>
+	</tbody></table>
+	</body>
+</html>

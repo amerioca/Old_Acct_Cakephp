@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />	<title>
+		CakePHP: the rapid development php framework:
+		Users	</title>
+	<link href="/favicon.ico" type="image/x-icon" rel="icon" /><link href="/favicon.ico" type="image/x-icon" rel="shortcut icon" /><link rel="stylesheet" type="text/css" href="/usermgmt/css/umstyle.css" />
+	<link rel="stylesheet" type="text/css" href="/css/cake.generic.css" />
+	<link rel="stylesheet" type="text/css" href="/js/jquery.mobile/demos/css/themes/default/jquery.mobile-1.4.3.min.css" />
+	<link rel="stylesheet" type="text/css" href="/js/jquery.mobile/demos/_assets/css/jqm-demos.css" />
+
+	<script type="text/javascript" src="/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/js/jquery.mobile/demos/_assets/js/index.js"></script>
+</head>
+<body>
+	<div id="container">
+		<div id="header">
+			<h1><a href="http://cakephp.org">CakePHP: the rapid development php framework</a></h1>
+		</div>
+		<div id="content">
+
+			
+			<div class="umtop">
+	<div id="flashMessage" class="message">You need to be signed in to view this page.</div>	<div class="um_box_up"></div>
+	<div class="um_box_mid">
+		<div class="um_box_mid_content">
+			<div class="um_box_mid_content_top">
+				<span class="umstyle1">Sign In or</span>
+				<span  class="umstyle2"><a href="/register">Sign Up</a></span>
+				<span class="umstyle2" style="float:right"><a href="/">Home</a></span>
+				<div style="clear:both"></div>
+			</div>
+			<div class="umhr"></div>
+			<div class="um_box_mid_content_mid" id="login">
+				<div class="um_box_mid_content_mid_left">
+					<form action="/login" id="UserLoginForm" method="post" accept-charset="utf-8"><div style="display:none;"><input type="hidden" name="_method" value="POST"/></div>					<div>
+						<div class="umstyle3">Email / Phone Number</div>
+						<div class="umstyle4" ><input name="data[User][username]" class="umstyle5" id="PhoneNumber" maxlength="32" type="text"/></div>
+											</div>
+					<div>
+						<div class="umstyle3">Password</div>
+						<div class="umstyle4"><input name="data[User][password]" class="umstyle5" type="password" id="UserPassword"/></div>
+						<div style="clear:both"></div>
+					</div>
+					<div>
+											<div class="umstyle3">Remember me</div>
+						<div class="umstyle4"><div class="input checkbox"><input type="hidden" name="data[User][remember]" id="UserRemember_" value="0"/><input type="checkbox" name="data[User][remember]"  value="1" id="UserRemember" checked="checked"/></div></div>
+						<div style="clear:both"></div>
+					</div>
+					<div>
+						<div class="umstyle3"></div>
+						<div class="umstyle4"><div class="submit"><input  type="submit" value="Sign In"/></div></div>
+						<div style="clear:both"></div>
+					</div>
+					</form>					<div  align="left"><a href="/forgotPassword" class="style30">Forgot Password?</a></div>
+					<div  align="left"><a href="/emailVerification" class="style30">Email Verification</a></div>
+				</div>
+				<div class="um_box_mid_content_mid_right" align="right">
+
+				</div>
+				<div style="clear:both"></div>
+			</div>
+		</div>
+	</div>
+	<div class="um_box_down"></div>
+</div>		</div>
+		<div id="footer">
+			<a href="http://www.cakephp.org/" target="_blank" id="cake-powered"><img src="/img/cake.power.gif" alt="CakePHP: the rapid development php framework" border="0" /></a>			<p>
+				CakePHP 2.5.3			</p>
+		</div>
+	</div>
+	<table class="cake-sql-log" id="cakeSqlLog_141193941954287c5b170427_45984818" summary="Cake SQL Log" cellspacing="0"><caption>(default) 0 query took  ms</caption>	<thead>
+		<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>
+	</thead>
+	<tbody>
+		</tbody></table>
+	</body>
+</html>

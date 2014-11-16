@@ -1,0 +1,78 @@
+<div class="credits list">
+	<h2><?php echo __('Credits'); ?></h2>
+	<table cellpadding="0" cellspacing="0">
+	<thead>
+	<tr>
+			<th><?php echo $this->Paginator->sort('id'); ?></th>
+			<th><?php echo $this->Paginator->sort('order_group_id'); ?></th>
+			<th><?php echo $this->Paginator->sort('user_id'); ?></th>
+			<th><?php echo $this->Paginator->sort('amount'); ?></th>
+			<th><?php echo $this->Paginator->sort('credit_type_id'); ?></th>
+			<th><?php echo $this->Paginator->sort('promoter_id'); ?></th>
+			<th><?php echo $this->Paginator->sort('admin_credit_id'); ?></th>
+			<th><?php echo $this->Paginator->sort('created'); ?></th>
+			<th><?php echo $this->Paginator->sort('modified'); ?></th>
+			<th class="actions"><?php echo __('Actions'); ?></th>
+	</tr>
+	</thead>
+	<tbody>
+	<?php foreach ($credits as $credit): ?>
+	<tr>
+		<td><?php echo h($credit['Credit']['id']); ?>&nbsp;</td>
+		<td>
+			<?php echo $this->Html->link($credit['OrderGroup']['id'], array('controller' => 'order_groups', 'action' => 'view', $credit['OrderGroup']['id'])); ?>
+		</td>
+		<td>
+			<?php echo $this->Html->link($credit['User']['id'], array('controller' => 'users', 'action' => 'view', $credit['User']['id'])); ?>
+		</td>
+		<td><?php echo h($credit['Credit']['amount']); ?>&nbsp;</td>
+		<td>
+			<?php echo $this->Html->link($credit['CreditType']['id'], array('controller' => 'credit_types', 'action' => 'view', $credit['CreditType']['id'])); ?>
+		</td>
+		<td>
+			<?php echo $this->Html->link($credit['Promoter']['name'], array('controller' => 'promoters', 'action' => 'view', $credit['Promoter']['id'])); ?>
+		</td>
+		<td>
+			<?php echo $this->Html->link($credit['AdminCredit']['name'], array('controller' => 'admin_credits', 'action' => 'view', $credit['AdminCredit']['id'])); ?>
+		</td>
+		<td><?php echo h($credit['Credit']['created']); ?>&nbsp;</td>
+		<td><?php echo h($credit['Credit']['modified']); ?>&nbsp;</td>
+		<td class="actions">
+			<?php echo $this->Html->link(__('View'), array('action' => 'view', $credit['Credit']['id'])); ?>
+			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $credit['Credit']['id'])); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $credit['Credit']['id']), array(), __('Are you sure you want to delete # %s?', $credit['Credit']['id'])); ?>
+		</td>
+	</tr>
+<?php endforeach; ?>
+	</tbody>
+	</table>
+	<p>
+	<?php
+	echo $this->Paginator->counter(array(
+	'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+	));
+	?>	</p>
+	<div class="paging">
+	<?php
+		echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
+		echo $this->Paginator->numbers(array('separator' => ''));
+		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
+	?>
+	</div>
+</div>
+<div class="actions">
+	<h3><?php echo __('Actions'); ?></h3>
+	<ul>
+		<li><?php echo $this->Html->link(__('New Credit'), array('action' => 'add')); ?></li>
+		<li><?php echo $this->Html->link(__('List Order Groups'), array('controller' => 'order_groups', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Order Group'), array('controller' => 'order_groups', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Credit Types'), array('controller' => 'credit_types', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Credit Type'), array('controller' => 'credit_types', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Promoters'), array('controller' => 'promoters', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Promoter'), array('controller' => 'promoters', 'action' => 'add')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Admin Credits'), array('controller' => 'admin_credits', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('New Admin Credit'), array('controller' => 'admin_credits', 'action' => 'add')); ?> </li>
+	</ul>
+</div>
