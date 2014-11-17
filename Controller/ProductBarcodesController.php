@@ -55,7 +55,7 @@ class ProductBarcodesController extends AppController {
 				$this->Session->setFlash(__('The product barcode could not be saved. Please, try again.'));
 			}
 		}
-		$products = $this->ProductBarcode->Product->find('list');
+		$products = $this->ProductBarcode->Product->find('list', array('order'=>array('Product.name ASC')));
 		$this->set(compact('products'));
 	}
 
