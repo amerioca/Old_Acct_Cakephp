@@ -144,7 +144,7 @@ class InventoriesController extends AppController
                 $this->render('confirm');
             } else {
                 $this->Session->setFlash(__('Barcode Not in Database'));
-                $this->redirect('/ProductBarcodes/add');
+                $this->redirect('/ProductBarcodes/add/'.$this->request->data['ProductBarcode']['barcode']);
             }
         }
         $products = $this->Inventory->Product->find('list', array('order'=>array('name')));

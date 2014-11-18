@@ -45,7 +45,7 @@ class ProductsController extends AppController {
  *
  * @return void
  */
-	public function add() {
+	public function add($barcode = null) {
 		if ($this->request->is('post')) {
 			$this->Product->create();
 			if ($this->Product->save($this->request->data)) {
@@ -55,6 +55,7 @@ class ProductsController extends AppController {
 				$this->Session->setFlash(__('The product could not be saved. Please, try again.'));
 			}
 		}
+        $this->set('barcode', $barcode);
 	}
 
 /**

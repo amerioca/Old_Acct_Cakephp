@@ -45,7 +45,7 @@ class ProductBarcodesController extends AppController {
  *
  * @return void
  */
-	public function add() {
+	public function add($barcode = null) {
 		if ($this->request->is('post')) {
 			$this->ProductBarcode->create();
 			if ($this->ProductBarcode->save($this->request->data)) {
@@ -57,6 +57,8 @@ class ProductBarcodesController extends AppController {
 		}
 		$products = $this->ProductBarcode->Product->find('list', array('order'=>array('Product.name ASC')));
 		$this->set(compact('products'));
+        $this->set('barcode', $barcode);
+
 	}
 
 /**

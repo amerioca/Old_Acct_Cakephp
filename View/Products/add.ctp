@@ -6,7 +6,7 @@
 		echo $this->Form->input('name');
 		echo $this->Form->input('ml');
 		echo $this->Form->input('labelnumber');
-		echo $this->Form->input('barcode');
+		echo $this->Form->input('barcode', array('value' => $barcode));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
