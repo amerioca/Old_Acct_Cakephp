@@ -47,6 +47,11 @@
             if (isset($credit[0][0]['credits'])) {
                 echo $this->Html->link($credit[0][0]['credits'], array('controller' => 'credits', 'action' => 'lists', $customer['User']['id']));
             } else echo '-0-';
+            ?> <?php echo __('Entrance Fee Owed'); ?>:
+            <?php
+            if (isset($credit[0][0]['credits'])) {
+                echo $this->Html->link($entrance_owed[0][0]['credits'], array('controller' => 'credits', 'action' => 'lists', $customer['User']['id']));
+            } else echo '-0-';
             ?>
             &nbsp;
         </dd>

@@ -57,9 +57,9 @@ class CreditsController extends AppController
             $data['Credit']['0'] = $this->request->data['Credit'];
             $data['Credit']['0']['amount'] = $entrance;
             $data['Credit']['0']['credit_type_id'] = '6';
-            $data['Credit']['1'] = $this->request->data['Credit'];
-            $data['Credit']['1']['amount'] = -$entrance;
-            $data['Credit']['1']['credit_type_id'] = '6';
+            //$data['Credit']['1'] = $this->request->data['Credit'];
+            //$data['Credit']['1']['amount'] = -$entrance;
+            //$data['Credit']['1']['credit_type_id'] = '6';
             $data['Credit']['2'] = $this->request->data['Credit'];
             $data['Credit']['2']['amount'] = $credit;
             $data['Credit']['2']['credit_type_id'] = '7';

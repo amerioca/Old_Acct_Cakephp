@@ -50,8 +50,10 @@ class CustomersController extends AppController
         }
         $options = array('conditions' => array('User.' . $this->User->primaryKey => $id));
         $customer = $this->User->find('first', $options);
-        $credit = $credits = $this->User->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE user_id=' . $customer['User']['id'] . ' group by user_id;');
-        $this->set(compact('customer', 'credit'));
+        $credit = $credits = $this->User->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE credit_type_id<>6 AND user_id=' . $customer['User']['id'] . ' group by user_id;');
+        $entrance_owed = $this->User->Credit->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE credit_type_id=6 AND user_id='.$customer['User']['id'] . ' group by user_id');
+        $this->set(compact('customer', 'credit', 'entrance_owed'));
+
     }
 
     /**
@@ -213,9 +215,9 @@ class CustomersController extends AppController
             $data_to_decode = hexdec($this->request->data['User']['username']);
             $data_to_decode = $data_to_decode - 21461034;
             $data_to_decode = strrev($data_to_decode);
-            debug($data);
+            //debug($data);
             // FIrst Check to see if we have an encrypted User Card.
-            if ($user = $this->User->find('first', array('conditions' => array('User.username' => $data_to_decode)))) { debug($user);
+            if ($user = $this->User->find('first', array('conditions' => array('User.username' => $data_to_decode)))) { //debug($user);
                 $this->Session->setFlash(__('Welcome Back ' . $user['User']['first_name']));
                 $this->redirect(array('controller' => 'Customers', 'action' => 'viewCustomer', $user['User']['id']));
             } elseif ( // Second Check by number to see if phone number is in the DB Make sure the number is over the card limit

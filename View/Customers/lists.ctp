@@ -10,6 +10,7 @@
             <th><?php echo $this->Paginator->sort('discount_id'); ?></th>
             <th><?php echo $this->Paginator->sort('promoter_id'); ?></th>
             <th><?php echo $this->Paginator->sort('allowedcredit'); ?></th>
+            <th><?php echo $this->Paginator->sort('location_id'); ?></th>
             <th><?php echo $this->Paginator->sort('created'); ?></th>
             <th><?php echo $this->Paginator->sort('modified'); ?></th>
             <th class="actions"><?php echo __('Actions'); ?></th>
@@ -27,6 +28,7 @@
             <td><?php echo h($customer['User']['discount_id']); ?>&nbsp;</td>
             <td><?php echo h($customer['User']['promoter_id']); ?>&nbsp;</td>
             <td><?php echo h($customer['User']['allowedcredit']); ?>&nbsp;</td>
+            <td><?php echo h($customer['User']['location_id']);?></td>
             <td><?php echo h($customer['User']['created']); ?>&nbsp;</td>
             <td><?php echo h($customer['User']['modified']); ?>&nbsp;</td>
             <td class="actions">
