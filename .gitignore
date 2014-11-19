@@ -9,6 +9,6 @@ tmp/logs/*
 tmp/tests/*
 #Backup/*
 Test/*
-[Cc]onfig/core.php
-[Cc]onfig/database.php
+#[Cc]onfig/core.php
+#[Cc]onfig/database.php
 !empty
