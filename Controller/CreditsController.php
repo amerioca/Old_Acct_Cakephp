@@ -52,37 +52,48 @@ class CreditsController extends AppController
     public function add($id = null)
     {
         if ($this->request->is('post')) {
-            $this->Credit->create(); //debug($this->request->data);
+            $this->Credit->create(); // debug($this->request->data);
             list($entrance, $credit) = split('[/]', $this->request->data['Cost']['Entrance']);
-            $data['Credit']['0'] = $this->request->data['Credit'];
-            $data['Credit']['0']['amount'] = $entrance;
-            $data['Credit']['0']['credit_type_id'] = '6';
-            //$data['Credit']['1'] = $this->request->data['Credit'];
-            //$data['Credit']['1']['amount'] = -$entrance;
-            //$data['Credit']['1']['credit_type_id'] = '6';
-            $data['Credit']['2'] = $this->request->data['Credit'];
-            $data['Credit']['2']['amount'] = $credit;
-            $data['Credit']['2']['credit_type_id'] = '7';
-            if(!empty($this->request->data['Credit']['amount'])){
+            // Deduct the price of entrance from money to be received
+            if ($entrance <> 0) {
+                $data['Credit']['0'] = $this->request->data['Credit'];
+                $data['Credit']['0']['amount'] = $entrance;
+                $data['Credit']['0']['credit_type_id'] = '6'; // Entrance Fee
+            }
+            //Add credit the customer will have on his account.
+            if ($entrance <> 0) {
+                $data['Credit']['1'] = $this->request->data['Credit'];
+                $data['Credit']['1']['amount'] = $credit;
+                $data['Credit']['1']['credit_type_id'] = '7'; //Entrance Consumption
+            }
+            // Check to see if credit/entrance was paid ahead of time.
+            if (!empty($this->request->data['Credit']['amount'])) {
+                $total_credit = $this->request->data['Credit']['amount'];
+                if ($total_credit >= $entrance AND $entrance<>0) {
+                    $data['Credit']['2'] = $this->request->data['Credit'];
+                    $data['Credit']['2']['amount'] = -$entrance;
+                    $data['Credit']['2']['credit_type_id'] = '6';
+                    $total_credit = $total_credit + $entrance;
+                }
                 $data['Credit']['3'] = $this->request->data['Credit'];
-                $data['Credit']['3']['credit_type_id'] = '5';
-                //$data['Credit'][2]['amount'] = $credit;
+                $data['Credit']['3']['amount'] = $total_credit;
+                $data['Credit']['3']['credit_type_id'] = '5'; // Employee added this credit
             }
             $data['User'] = $this->request->data['User'];
             //debug($data); //die;
             if ($this->User->saveAll($data)) {
                 $this->Session->setFlash(__('The credit has been saved.'));
-                return $this->redirect(array('controller'=>'Customers', 'action' => 'addCustomer'));
+                return $this->redirect(array('controller' => 'Customers', 'action' => 'addCustomer'));
             } else {
                 $this->Session->setFlash(__('The credit could not be saved. Please, try again.'));
             }
         }
         $this->User->recursive = -1;
-        $customer = $this->User->find('first', array('conditions'=>array('User.id'=>$id)));
+        $customer = $this->User->find('first', array('conditions' => array('User.id' => $id)));
         $orderGroups = $this->Credit->OrderGroup->find('list');
         $users = $this->Credit->User->find('list');
-        $creditTypes = $this->Credit->CreditType->find('list', array('fields'=>array('CreditType.id', 'CreditType.type')));
-        $promoters = $this->Credit->Promoter->find('list', array('fields'=>array('Promoter.id', 'Promoter.first_name')));
+        $creditTypes = $this->Credit->CreditType->find('list', array('fields' => array('CreditType.id', 'CreditType.type')));
+        $promoters = $this->Credit->Promoter->find('list', array('fields' => array('Promoter.id', 'Promoter.first_name')));
         $adminCredits = $this->Credit->AdminCredit->find('list');
         $this->set(compact('orderGroups', 'users', 'creditTypes', 'promoters', 'adminCredits', 'customer'));
     }
@@ -201,7 +212,7 @@ class CreditsController extends AppController
         //debug($this->Session->read('cuser'));
         if ($this->Session->read('cuser.User.id')) {
             $this->set('User', $this->Session->read('cuser'));
-           // debug($this->request->data);
+            // debug($this->request->data);
             $this->render('credit');
         }
     }
@@ -229,8 +240,8 @@ class CreditsController extends AppController
             $Credit['credit_type_id'] = 1;
             //$this->log($Credit, 'debug');
             $this->Credit->create();
-            if($this->Credit->Save($Credit)){
-                $this->Session->setFlash(__('Credit Amount added: ').$Credit['amount'].' $R');
+            if ($this->Credit->Save($Credit)) {
+                $this->Session->setFlash(__('Credit Amount added: ') . $Credit['amount'] . ' $R');
             } else $this->Session->setFlash(__('Something went wrong, try again'));
 
             $this->set('credit_id', $this->Credit->id);
@@ -238,10 +249,11 @@ class CreditsController extends AppController
             $this->Session->delete('credit');
         }
         //$this->layout = 'ajax';
-        $this->redirect(array('action'=>'start'));
+        $this->redirect(array('action' => 'start'));
     }
 
-    function paypal(){
+    function paypal()
+    {
         App::uses('Paypal', 'Paypal.Lib');
 
         $this->Paypal = new Paypal(array(
@@ -300,14 +312,15 @@ class CreditsController extends AppController
             )
         );
 
-        if(isset($id)){
-            $this->Paginator->settings['Credit']['conditions'] = array('Credit.user_id'=>$id);
+        if (isset($id)) {
+            $this->Paginator->settings['Credit']['conditions'] = array('Credit.user_id' => $id);
         }
         $this->Credit->recursive = 0;
         $this->set('credits', $this->Paginator->paginate());
     }
 
-    public function pay($id = null){
+    public function pay($id = null)
+    {
         if (!$this->User->exists($id)) {
             throw new NotFoundException(__('Invalid User'));
         }
@@ -323,12 +336,12 @@ class CreditsController extends AppController
             $this->request->data = $this->Credit->find('first', $options);
         }
         $this->User->recursive = -1;
-        $customer = $this->User->find('first', array('conditions'=>array('User.id'=>$id)));
+        $customer = $this->User->find('first', array('conditions' => array('User.id' => $id)));
         $credits = $this->User->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE user_id=' . $customer['User']['id'] . ' group by user_id;');
         $orderGroups = $this->Credit->OrderGroup->find('list');
         $users = $this->Credit->User->find('list');
-        $creditTypes = $this->Credit->CreditType->find('list', array('fields'=>array('CreditType.id', 'CreditType.type')));
-        $promoters = $this->Credit->Promoter->find('list', array('fields'=>array('Promoter.id', 'Promoter.first_name')));
+        $creditTypes = $this->Credit->CreditType->find('list', array('fields' => array('CreditType.id', 'CreditType.type')));
+        $promoters = $this->Credit->Promoter->find('list', array('fields' => array('Promoter.id', 'Promoter.first_name')));
         $adminCredits = $this->Credit->AdminCredit->find('list');
         $this->set(compact('orderGroups', 'users', 'creditTypes', 'promoters', 'adminCredits', 'customer', 'credits'));
     }

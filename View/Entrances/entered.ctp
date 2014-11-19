@@ -19,7 +19,7 @@
             <td><?php echo h($user['User']['id']); ?>&nbsp;</td>
     <td><?php echo h($user['User']['first_name'] . ' ' . $user['User']['last_name']); ?>&nbsp;</td>
     <td>
-        <?php echo $this->Html->link($user['User']['username'], array('controller' => 'users', 'action' => 'view', $user['User']['id'])); ?>
+        <?php echo $this->Html->link($user['User']['username'], array('controller' => 'customers', 'action' => 'viewCustomer', $user['User']['id'])); ?>
     </td>
     <td><?php echo h($user['UserGroup']['name']); ?>&nbsp;</td>
     <td><?php echo h($user['Discount']['name']); ?>&nbsp;</td>
