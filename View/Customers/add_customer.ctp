@@ -9,15 +9,14 @@
 </script>
 <div class="users form">
 <?php echo $this->Form->create('User'); ?>
-	<fieldset>
-		<legend><?php echo __('Add User'); ?></legend>
-
-        <div class="input select"><label for="CreditAmount">Entrance</label><select name="data[Credit][amount]" id="CreditAmount">
-            <option value="0">No Credit</option>
-            <option value="20">20$R</option>
-            <option value="30">30$R</option>
-            <option value="40">40$R</option>
-        </select></div><?
+        <?php  echo $this->Form->input('Cost.Entrance', array(
+                'options'=>array(
+                    '0/0'=>'0$R',
+                    '-20/0'=>'20$R '.__('Entrance'),
+                    '-20/20'=>'20$R '.__('Entrance').' :: 20$R '.__('Credit'),
+                    '-30/20'=>'30$R '.__('Entrance').' :: 20$R '.__('Credit'),
+                    '-50/20'=>'50$R '.__('Entrance').' :: 20$R '.__('Credit')
+                ))); ?><?
 		echo $this->Form->input('username',array('autofocus'=>'autofocus', 'label'=>__('Phone Number, or Card Reader')));
         echo $this->Form->input('first_name', array('placeholder'=>'http://'));
         echo $this->Form->input('barcode');

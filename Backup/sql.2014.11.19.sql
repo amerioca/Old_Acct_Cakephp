@@ -1,9 +1,5 @@
--- MySQL dump 10.13  Distrib 5.5.34, for osx10.6 (i386)
---
--- Host: localhost    Database: clublove
--- ------------------------------------------------------
--- Server version	5.5.34-log
-
+#CREATE DATABASE acct;
+USE acct;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
