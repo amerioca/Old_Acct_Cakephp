@@ -52,6 +52,7 @@ class CreditsController extends AppController
     public function add($id = null)
     {
         if ($this->request->is('post')) {
+            debug($this->request->data['Credit']);
             $this->Credit->create(); // debug($this->request->data);
             list($entrance, $credit) = split('[/]', $this->request->data['Cost']['Entrance']);
             // Deduct the price of entrance from money to be received

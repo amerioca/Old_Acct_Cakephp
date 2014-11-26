@@ -15,7 +15,7 @@ class CustomersController extends AppController
      * @var array
      */
     public $components = array('Paginator');
-    public $uses = array('User', 'Entrance', 'Discount');
+    public $uses = array('User', 'Entrance', 'Discount', 'Credit');
 
     /**
      * index method
@@ -51,7 +51,7 @@ class CustomersController extends AppController
         $options = array('conditions' => array('User.' . $this->User->primaryKey => $id));
         $customer = $this->User->find('first', $options);
         $credit = $credits = $this->User->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE credit_type_id<>6 AND user_id=' . $customer['User']['id'] . ' group by user_id;');
-        $entrance_owed = $this->User->Credit->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE credit_type_id=6 AND user_id='.$customer['User']['id'] . ' group by user_id');
+        $entrance_owed = $this->User->Credit->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE credit_type_id=6 AND user_id=' . $customer['User']['id'] . ' group by user_id');
         $this->set(compact('customer', 'credit', 'entrance_owed'));
 
     }
@@ -202,6 +202,11 @@ class CustomersController extends AppController
     public
     function addCustomer()
     {
+        $userGroups = $this->User->UserGroup->find('list');
+        $discounts = $this->Discount->find('list');
+        $this->set(compact('userGroups', 'discounts'));
+        $this->set('promoters', $this->User->Promoter->find('list', array('fields' => array('Promoter.id', 'Promoter.first_name'))));
+
         if ($this->request->is('post')) {
             $data = $this->request->data;
             if ($this->request->data['User']['username'] == null) {
@@ -215,56 +220,138 @@ class CustomersController extends AppController
             $data_to_decode = hexdec($this->request->data['User']['username']);
             $data_to_decode = $data_to_decode - 21461034;
             $data_to_decode = strrev($data_to_decode);
-            //debug($data);
-            // FIrst Check to see if we have an encrypted User Card.
-            if ($user = $this->User->find('first', array('conditions' => array('User.username' => $data_to_decode)))) { //debug($user);
-                $this->Session->setFlash(__('Welcome Back ' . $user['User']['first_name']));
+            debug($data_to_decode);
+
+            // Make sure didn't put Phone or PBarcode into Barcode field by accident.
+            if ($this->User->find('first', array('conditions' => array(
+                'User.username' => $data['User']['barcode'])))) {  //TODO DTG // need to unencrypt the barcode
+                $this->Session->setFlash(__('Looks like you submitted a Phone number, or Phone number barcode into the Barcode field'));
+                return $this->render(); // Stop the output if it is.
+            }
+
+            debug($this->User->find('first', array('conditions' => array('User.username' => $data_to_decode))));
+            // First Check to see if we have an encrypted User Card.
+            if ($user = $this->User->find('first', array('conditions' => array('User.username' => $data_to_decode))))
+            { debug($user);
                 $this->redirect(array('controller' => 'Customers', 'action' => 'viewCustomer', $user['User']['id']));
-            } elseif ( // Second Check by number to see if phone number is in the DB Make sure the number is over the card limit
+                die;
+            }
+
+            // Second Check by number to see if phone number is in the DB Make sure the number is over the card limit
+            elseif (
                 $user = $this->User->find('first', array('conditions' => array(
                     'User.username' => $data['User']['username'],
                     'User.active = 1'))) && $data['User']['username'] >= 9999
-            ) { debug($user);
-                $this->Session->setFlash(__('This User already Exists'));
+            ) {
+                $this->Session->setFlash(__('Welcome Back ' . $user['User']['first_name']));
                 $this->redirect(array('controller' => 'Customers', 'action' => 'viewCustomer', $user['User']['id']));
-            } // Third Chance, add the user into the DB by Card, or Phone number
-            elseif ($user = $this->User->find('first', array('conditions' => array(
-                'User.barcode' => $data['User']['barcode'],
-                'User.location_id' => 0)))
-            ) { debug($user);
-
-            } elseif ($data['User']['username'] < 10000) {
-                $data['User']['barcode'] = $data['User']['username'];
-                $data['User']['username'] = null;
             }
-
-            //debug($user);
-            $this->User->create();
-            $this->log('CustomersController:242', 'debug');
-            $this->log($data, 'debug');
-            if ($this->User->find('first', array('conditions' => array('username' => $data['User']['username'], 'User.location_id' => 0)))) {
-                if ($this->User->save($data)) { //debug($this->request->data['Credit']['amount']);
-                    if ($this->request->data['Credit']['amount'] > 0) {
-                        $credit['Credit']['amount'] = $this->data['Credit']['amount'];
-                        $credit['Credit']['user_id'] = $this->User->id;
-                        $credit['Credit']['admin_credit_id'] = $this->Session->read('UserAuth.User.id');
-                        $credit['Credit']['promoter_id'] = $this->request->data['User']['promoter_id'];
-                        //debug($credit);
-                        $this->User->Credit->create();
-                        $this->User->Credit->save($credit);
-                    }
-                    $this->Session->setFlash(__('The user may Enter.'));
-                    //return $this->redirect(array('action' => 'index'));
-                } else {
-                    $this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+            // Third, Check to see if the Barcode is blank, and the Phone number is set to add the Custom User
+            elseif(empty($this->request->data['User']['barcode']) && !empty($this->request->data['User']['username'])){
+                $data = $this->request->data;
+                if(empty($this->request->data['User']['pin'])){
+                    $data['User']['pin'] = rand(1000, 999999);
                 }
+                debug($data); die;
             }
-            $this->Session->setFlash(__('User Logged in already'));
+
+
+            // Forth Chance, add the user into the DB by Card
+            // Check to see if we used this Card before
+            elseif ($user = $this->User->find('first',
+                array('conditions' =>
+                array('User.barcode' => $data['User']['barcode'])))
+            ) // Check to see if the Barcode is in use, and Exists
+            { debug($user);
+                if ($user['User']['location_id'] >= 1) { // Customer is already logged in
+                    $this->Session->setFlash(__('Card in With a Customer!'));
+                    return $this->render();
+                    $this->redirect(array('action' => 'addCustomer'));
+                    die;
+                } else {
+                    unset($user['User']['created']);
+                    unset($user['User']['modified']);
+                    $data['User'] = array_merge($user['User'], $this->request->data['User']);
+                    $data['User']['location_id']=1; //TODO DTG // need to figure out the location id to set for the current logged in user.
+                    if ($data['User']['username'] == '') {
+                        $data['User']['username'] = hexdec($data['User']['barcode']);
+                    }
+                    //debug($data);
+                    // Need to check in this Customer with a zero balance.
+                    $credits = $this->User->query('SELECT user_id, SUM(amount) as credits FROM credits WHERE user_id=' . $data['User']['id'] . ' group by user_id;');
+                    if (($credit = $credits[0][0]['credits']) < 0) {
+                        //Credit Still Owed on this Card
+                        $this->Session->setFlash('Card still needs to be paid');
+                        return $this->render();
+                    } elseif($credit > 0) {
+                        $amt_to_credit['Credit']['user_id'] = $data['User']['id'];
+                        $amt_to_credit['Credit']['amount'] = -$credit;
+                        $amt_to_credit['Credit']['admin_credit_id'] = 0;
+                        $amt_to_credit['Credit']['credit_type_id'] = 8;
+                        $this->Credit->Save($amt_to_credit);
+                    }
+                    //debug($credit); die;
+                }
+            } // Fifth, add the card to the DB and setup the Customer
+            elseif (isset($data['User']['barcode'])) {
+                $user = $data;
+                //$data['User']['barcode'] = $data['User']['username'];
+                //$data['User']['username'] = null;
+            } //TODO DTG // Check to see if encrypted phone number was accidentally put into Barcode when no user exists;
+
+
+            //debug($this->request->data);
+            $this->User->create();
+            $this->log($data, 'debug');
+
+            if ($this->User->save($data)) { //debug($this->request->data['Credit']['amount']);
+                $this->User->Credit->create(); // debug($this->request->data);
+                list($entrance, $credit) = split('[/]', $this->request->data['Cost']['Entrance']);
+                // Deduct the price of entrance from money to be received
+                $Credit['promoter_id'] = $this->request->data['User']['promoter_id'];
+                $Credit['user_id'] = $this->User->id;
+                $Credit['admin_credit_id'] = $this->request->data['Cost']['admin_credit_id'];
+                if ($entrance <> 0) {
+                    $CREDIT['0']['Credit'] = $Credit;
+                    $CREDIT['0']['Credit']['amount'] = $entrance;
+                    $CREDIT['0']['Credit']['credit_type_id'] = '6'; // Entrance Fee
+                }
+                //Add credit the customer will have on his account.
+                if ($entrance <> 0) {
+                    $CREDIT['1']['Credit'] = $Credit;
+                    $CREDIT['1']['Credit']['amount'] = $credit;
+                    $CREDIT['1']['Credit']['credit_type_id'] = '7'; //Entrance Consumption
+                }
+                // Check to see if credit/entrance was paid ahead of time.
+                if (!empty($this->request->data['Cost']['amount'])) {
+                    $total_credit = $this->request->data['Cost']['amount'];
+                    if ($total_credit >= $entrance AND $entrance <> 0) {
+                        $CREDIT['2']['Credit'] = $Credit;
+                        $CREDIT['2']['Credit']['amount'] = -$entrance;
+                        $CREDIT['2']['Credit']['credit_type_id'] = '6';
+                        $total_credit = $total_credit + $entrance;
+                    }
+                    $CREDIT['3']['Credit'] = $Credit;
+                    $CREDIT['3']['Credit']['amount'] = $total_credit;
+                    $CREDIT['3']['Credit']['credit_type_id'] = '5'; // Employee added this credit
+                }
+                //$CREDIT['User'] = $this->request->data['User'];
+                //$CREDIT['User']['id'] = $this->User->id;
+                //debug($CREDIT); //die;
+
+                if ($this->Credit->saveAll($CREDIT)) {
+                    $this->Session->setFlash(__('The credit has been saved, and the card has been activated'));
+                    return $this->redirect('addCustomer');
+                    die;
+                } else {
+                    $this->Session->setFlash(__('The credit could not be saved. Please, try again.'));
+                    return $this->render();
+                    die;
+                }
+            } else {
+                $this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+            }
         }
-        $userGroups = $this->User->UserGroup->find('list');
-        $discounts = $this->Discount->find('list');
-        $this->set(compact('userGroups', 'discounts'));
-        $this->set('promoters', $this->User->Promoter->find('list', array('fields' => array('Promoter.id', 'Promoter.first_name'))));
     }
 
     function enter($id = null)

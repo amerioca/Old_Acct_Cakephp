@@ -9,7 +9,9 @@
 </script>
 <div class="users form">
 <?php echo $this->Form->create('User'); ?>
-        <?php  echo $this->Form->input('Cost.Entrance', array(
+        <?php
+    echo $this->Form->input('Cost.amount', array('label'=>__('Paid - (Cash Received)')));
+    echo $this->Form->input('Cost.Entrance', array(
                 'options'=>array(
                     '0/0'=>'0$R',
                     '-20/0'=>'20$R '.__('Entrance'),
@@ -30,6 +32,7 @@
 
 	//	echo $this->Form->input('active');
 	?>
+    <input type="hidden" name="data[Cost][admin_credit_id]" value="<?php echo $this->Session->read('UserAuth.User.id');?>">
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
 </div>
