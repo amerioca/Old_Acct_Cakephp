@@ -220,7 +220,7 @@ class CustomersController extends AppController
             $data_to_decode = hexdec($this->request->data['User']['username']);
             $data_to_decode = $data_to_decode - 21461034;
             $data_to_decode = strrev($data_to_decode);
-            debug($data_to_decode);
+            //debug($data_to_decode);
 
             // Make sure didn't put Phone or PBarcode into Barcode field by accident.
             if ($this->User->find('first', array('conditions' => array(
@@ -229,11 +229,11 @@ class CustomersController extends AppController
                 return $this->render(); // Stop the output if it is.
             }
 
-            debug($this->User->find('first', array('conditions' => array('User.username' => $data_to_decode))));
+            //debug($this->User->find('first', array('conditions' => array('User.username' => $data_to_decode))));
             // First Check to see if we have an encrypted User Card.
             if ($user = $this->User->find('first', array('conditions' => array('User.username' => $data_to_decode))))
-            { debug($user);
-                $this->redirect(array('controller' => 'Customers', 'action' => 'viewCustomer', $user['User']['id']));
+            { //debug($user);
+                return $this->redirect(array('controller' => 'Customers', 'action' => 'viewCustomer', $user['User']['id']));
                 die;
             }
 

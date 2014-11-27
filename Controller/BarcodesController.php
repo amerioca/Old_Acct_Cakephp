@@ -160,6 +160,31 @@ class BarcodesController extends AppController
     {
 
     }
+
+    function promoters($promoter = null, $start = null, $amt = null)
+    {
+        $this->layout = 'ajax';
+        for ($i = $start; $i < $start + $amt; $i++) {
+            $barcode = new BarcodeHelper();
+
+            $code = $promoter . '|' . dechex($i);
+            $barcode->barcode();
+            $barcode->setType('C128');
+            //$barcode->setCode($data_to_encode);
+            $barcode->setCode($code);
+            $barcode->setText($code);
+            //$barcode->setSize(70,240);
+            // Try and get this to print on Avery Labels Printing Template L7409
+            $barcode->setSize(50, 175);
+
+            // Generate filename
+            $random = rand(0, 1000000);
+            $file[$i] = 'img/barcode/promoter/8.' . $i . '.png';
+            // Generates image file on server
+            $barcode->writeBarcodeFile($file[$i]);
+        }
+        $this->set(array('image' => $file));
+    }
 }
 
 
