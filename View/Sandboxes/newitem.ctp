@@ -192,7 +192,7 @@
             class="text-danger">*</span></span> Required</a></li>
 </ul>
 
-<form class="form-horizontal" role="form">
+<form class="form-horizontal" role="form" method="post" action="">
 <div class="tab-content form-tab">
 <div class="tab-pane active" id="item">
 
@@ -2049,14 +2049,15 @@
 
 </div>
 </div>
-</form>
+
 </div>
 
 </div>
 <div class="box-footer text-right">
+    <input type="submit" class="btn btn-primary" value="+ &nbsp; Add New Item">
     <a href="#" id="addBtn" class="btn btn-primary"><span class="fa fa-plus"></span> &nbsp; Add New Item</a>
 </div>
 </div>
-
+</form>
 
 </div>

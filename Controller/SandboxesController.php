@@ -20,6 +20,24 @@ class SandboxesController extends AppController
     {
         $this->layout = 'bevager';
     }
+
+    function home()
+    {
+        $this->layout = 'ajax';
+    }
+
+    function login()
+    {
+        $this->layout = 'ajax';
+        $this->Session->setFlash(__('Incorrect username or password. Please try again'));
+        $this->set('alert', 1);
+    }
+
+    function diff(){
+        $this->layout = 'ajax';
+    }
+
+
 }
 
 ?>

@@ -81,7 +81,7 @@ class UsersController extends UserMgmtAppController {
 	 * @access public
 	 * @return void
 	 */
-	public function login() {
+	public function login() { //debug($this->request->data);
 		if ($this->request -> isPost()) {
 			$this->User->set($this->data);
 			if($this->User->LoginValidate()) {
