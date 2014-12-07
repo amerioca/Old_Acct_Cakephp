@@ -8,6 +8,7 @@ tmp/sessions/*
 tmp/logs/*
 tmp/tests/*
 #Backup/*
+webroot/img/barcode/*
 Test/*
 #[Cc]onfig/core.php
 #[Cc]onfig/database.php
