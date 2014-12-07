@@ -64,6 +64,11 @@
     });
 </script>
 
+<?php //for newitem ?>
+<script src="https://d3jruo7yef7z6a.cloudfront.net/assets/javascripts/91be046809bbcaa138d07ec134f627db-itemDynamicSelect.min.js"></script>
+<script src="https://d3jruo7yef7z6a.cloudfront.net/assets/javascripts/buyer/82c42b8188126b169dbe57f31376d2bd-item.min.js"></script>
+
+<?php // ?>
 <script src="https://d3jruo7yef7z6a.cloudfront.net/assets/javascripts/1dab2408080867c9a644d9208db7bcc0-sorttable.js"></script>
 
 
