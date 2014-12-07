@@ -8,6 +8,25 @@
     }
 </script>
 <div class="users form">
+    <?php if(isset($image)){ ?>
+    <iframe src="/Barcodes/barcode/<?= $image;?>"></iframe>
+    <button onclick="pop();">
+        Pop</button>
+    <script type="text/javascript">
+        var POP;
+        function pop() {
+            var newWin = window.open('', 'thePopup', 'width=350,height=350');
+            newWin.document.write("<html><head><title>popup</title></head><body><h1>Pop</h1>" +
+                    "<p>Print me</p><a href='print.html' onclick='window.print();return false;'>" +
+                    "<img src='/webroot/img/barcode/<?= $image;?>'.png' height='32px' width='32px'></a></body></html>");
+            newWin.window.location.reload();    // this is the secret ingredient
+            newWin.focus();                     // not sure if this line is necessary
+            newWin.print();
+        }
+    </script>
+
+<? } ?>
+
 <?php echo $this->Form->create('User'); ?>
         <?php
     echo $this->Form->input('Cost.amount', array('label'=>__('Paid - (Cash Received)')));

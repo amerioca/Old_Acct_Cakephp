@@ -224,20 +224,18 @@ class CustomersController extends AppController
 
             // Make sure didn't put Phone or PBarcode into Barcode field by accident.
             if ($this->User->find('first', array('conditions' => array(
-                'User.username' => $data['User']['barcode'])))) {  //TODO DTG // need to unencrypt the barcode
+                'User.username' => $data['User']['barcode'])))
+            ) { //TODO DTG // need to unencrypt the barcode
                 $this->Session->setFlash(__('Looks like you submitted a Phone number, or Phone number barcode into the Barcode field'));
                 return $this->render(); // Stop the output if it is.
             }
 
             //debug($this->User->find('first', array('conditions' => array('User.username' => $data_to_decode))));
             // First Check to see if we have an encrypted User Card.
-            if ($user = $this->User->find('first', array('conditions' => array('User.username' => $data_to_decode))))
-            { //debug($user);
+            if ($user = $this->User->find('first', array('conditions' => array('User.username' => $data_to_decode)))) { //debug($user);
                 return $this->redirect(array('controller' => 'Customers', 'action' => 'viewCustomer', $user['User']['id']));
                 die;
-            }
-
-            // Second Check by number to see if phone number is in the DB Make sure the number is over the card limit
+            } // Second Check by number to see if phone number is in the DB Make sure the number is over the card limit
             elseif (
                 $user = $this->User->find('first', array('conditions' => array(
                     'User.username' => $data['User']['username'],
@@ -245,24 +243,25 @@ class CustomersController extends AppController
             ) {
                 $this->Session->setFlash(__('Welcome Back ' . $user['User']['first_name']));
                 $this->redirect(array('controller' => 'Customers', 'action' => 'viewCustomer', $user['User']['id']));
-            }
-            // Third, Check to see if the Barcode is blank, and the Phone number is set to add the Custom User
-            elseif(empty($this->request->data['User']['barcode']) && !empty($this->request->data['User']['username'])){
+            } // Third, Check to see if the Barcode is blank, and the Phone number is set to add the Custom User
+            elseif (empty($this->request->data['User']['barcode']) && !empty($this->request->data['User']['username'])) {
                 $data = $this->request->data;
-                if(empty($this->request->data['User']['pin'])){
+                if (empty($this->request->data['User']['pin'])) {
                     $data['User']['pin'] = rand(1000, 999999);
                 }
-                debug($data); die;
-            }
+                //debug($data); die
+                $this->Session->setFlash(__('Added new Customer, Print Barcode'));
+                $image = 1; //die;
+                //$this->redirect(array('Controller'=>'Barcodes', 'action'=>'barcode', $this->User->id));
 
-
-            // Forth Chance, add the user into the DB by Card
+            } // Forth Chance, add the user into the DB by Card
             // Check to see if we used this Card before
             elseif ($user = $this->User->find('first',
                 array('conditions' =>
                 array('User.barcode' => $data['User']['barcode'])))
             ) // Check to see if the Barcode is in use, and Exists
-            { debug($user);
+                {
+                debug($user);
                 if ($user['User']['location_id'] >= 1) { // Customer is already logged in
                     $this->Session->setFlash(__('Card in With a Customer!'));
                     return $this->render();
@@ -272,7 +271,7 @@ class CustomersController extends AppController
                     unset($user['User']['created']);
                     unset($user['User']['modified']);
                     $data['User'] = array_merge($user['User'], $this->request->data['User']);
-                    $data['User']['location_id']=1; //TODO DTG // need to figure out the location id to set for the current logged in user.
+                    $data['User']['location_id'] = 1; //TODO DTG // need to figure out the location id to set for the current logged in user.
                     if ($data['User']['username'] == '') {
                         $data['User']['username'] = hexdec($data['User']['barcode']);
                     }
@@ -283,7 +282,7 @@ class CustomersController extends AppController
                         //Credit Still Owed on this Card
                         $this->Session->setFlash('Card still needs to be paid');
                         return $this->render();
-                    } elseif($credit > 0) {
+                    } elseif ($credit > 0) {
                         $amt_to_credit['Credit']['user_id'] = $data['User']['id'];
                         $amt_to_credit['Credit']['amount'] = -$credit;
                         $amt_to_credit['Credit']['admin_credit_id'] = 0;
@@ -299,12 +298,12 @@ class CustomersController extends AppController
                 //$data['User']['username'] = null;
             } //TODO DTG // Check to see if encrypted phone number was accidentally put into Barcode when no user exists;
 
-
             //debug($this->request->data);
             $this->User->create();
             $this->log($data, 'debug');
 
             if ($this->User->save($data)) { //debug($this->request->data['Credit']['amount']);
+                if($image == 1){ $this->set('image', $this->User->id); } // If the Image bit is set, Show the Image on the next page.
                 $this->User->Credit->create(); // debug($this->request->data);
                 list($entrance, $credit) = split('[/]', $this->request->data['Cost']['Entrance']);
                 // Deduct the price of entrance from money to be received
@@ -338,15 +337,16 @@ class CustomersController extends AppController
                 //$CREDIT['User'] = $this->request->data['User'];
                 //$CREDIT['User']['id'] = $this->User->id;
                 //debug($CREDIT); //die;
-
-                if ($this->Credit->saveAll($CREDIT)) {
-                    $this->Session->setFlash(__('The credit has been saved, and the card has been activated'));
-                    return $this->redirect('addCustomer');
-                    die;
-                } else {
-                    $this->Session->setFlash(__('The credit could not be saved. Please, try again.'));
-                    return $this->render();
-                    die;
+                if (isset($CREDIT)) {
+                    if ($this->Credit->saveAll($CREDIT)) {
+                        $this->Session->setFlash(__('The credit has been saved, and the card has been activated'));
+                        return $this->redirect('addCustomer');
+                        die;
+                    } else {
+                        $this->Session->setFlash(__('The credit could not be saved. Please, try again.'));
+                        return $this->render();
+                        die;
+                    }
                 }
             } else {
                 $this->Session->setFlash(__('The user could not be saved. Please, try again.'));

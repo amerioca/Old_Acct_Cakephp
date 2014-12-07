@@ -85,7 +85,7 @@ class BarcodesController extends AppController
             $barcode->barcode();
             $barcode->setType('C128');
             //$barcode->setCode($data_to_encode);
-            $barcode->setCode($phone);
+            $barcode->setCode($data_to_encode);
             $barcode->setText($phone);
             //$barcode->setSize(70,240);
             $barcode->setSize(65, 173);
@@ -161,8 +161,9 @@ class BarcodesController extends AppController
 
     }
 
-    function promoters($promoter = null, $start = null, $amt = null)
+    function promoters($promoter = null, $amt = null)
     {
+        $start = time();
         $this->layout = 'ajax';
         for ($i = $start; $i < $start + $amt; $i++) {
             $barcode = new BarcodeHelper();
@@ -175,7 +176,7 @@ class BarcodesController extends AppController
             $barcode->setText($code);
             //$barcode->setSize(70,240);
             // Try and get this to print on Avery Labels Printing Template L7409
-            $barcode->setSize(50, 175);
+            $barcode->setSize(42, 146); // 48x168 => 12.7x44.45
 
             // Generate filename
             $random = rand(0, 1000000);
